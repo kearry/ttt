@@ -66,6 +66,8 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async session({ token, session }) {
+            console.log("Session callback, token:", token); // Debug log
+
             if (token) {
                 session.user.id = token.id as string;
                 session.user.name = token.name;
@@ -75,6 +77,8 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
         async jwt({ token, user }) {
+            console.log("JWT callback, user:", user); // Debug log
+
             if (user) {
                 token.id = user.id;
             }
@@ -86,7 +90,9 @@ export const authOptions: NextAuthOptions = {
 // For server components
 import { getServerSession } from "next-auth";
 export async function auth() {
-    return await getServerSession(authOptions);
+    const session = await getServerSession(authOptions);
+    console.log("Auth helper, session:", session); // Debug log
+    return session;
 }
 
 // For API routes
