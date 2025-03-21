@@ -8,7 +8,14 @@ import { makeMove, joinGame } from "@/lib/actions/game-actions";
 import { useRouter } from "next/navigation";
 
 interface GameBoardProps {
-    game: any;
+    game: {
+        id: string;
+        board: string;
+        status: string;
+        playerX: { name?: string };
+        playerO?: { name?: string };
+        playerOId?: string | null;
+    };
     userRole: string;
     userId: string;
 }
@@ -116,7 +123,7 @@ export default function GameBoard({ game, userRole, userId }: GameBoardProps) {
             <Card className="p-6 flex flex-col items-center justify-center">
                 <h2 className="text-xl font-bold mb-4">Join this game?</h2>
                 <p className="text-center mb-6">
-                    You've been invited to play against {game.playerX.name || "Player X"}
+                    You&apos;ve been invited to play against {game.playerX.name || "Player X"}
                 </p>
                 <Button
                     onClick={handleJoinGame}

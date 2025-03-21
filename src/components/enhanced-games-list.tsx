@@ -30,7 +30,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface EnhancedGamesListProps {
-    games: any[];
+    games: {
+        id: string;
+        status: "ONGOING" | "DRAW" | "PLAYER_X_WON" | "PLAYER_O_WON";
+        playerXId: string;
+        playerOId: string | null;
+        playerX?: { name: string; image?: string };
+        playerO?: { name: string; image?: string };
+        board: string;
+        createdAt: string;
+    }[];
     userId: string;
 }
 
@@ -59,7 +68,7 @@ export default function EnhancedGamesList({ games, userId }: EnhancedGamesListPr
         }
     }
 
-    function getGameStatusIcon(game: any) {
+    function getGameStatusIcon(game: EnhancedGamesListProps["games"][number]) {
         if (game.status === "ONGOING") {
             return <Clock className="h-5 w-5 text-blue-500" />;
         } else if (game.status === "DRAW") {
@@ -74,7 +83,7 @@ export default function EnhancedGamesList({ games, userId }: EnhancedGamesListPr
         }
     }
 
-    function getOpponentInfo(game: any) {
+    function getOpponentInfo(game: EnhancedGamesListProps["games"][number]) {
         if (game.playerXId === userId) {
             return game.playerO
                 ? { name: game.playerO.name || "Player O", image: game.playerO.image }
@@ -87,11 +96,11 @@ export default function EnhancedGamesList({ games, userId }: EnhancedGamesListPr
         }
     }
 
-    function getPlayerSymbol(game: any) {
+    function getPlayerSymbol(game: EnhancedGamesListProps["games"][number]) {
         return game.playerXId === userId ? "X" : "O";
     }
 
-    function getStatusText(game: any) {
+    function getStatusText(game: EnhancedGamesListProps["games"][number]) {
         if (game.status === "ONGOING") {
             if (!game.playerOId) {
                 return "Waiting for opponent";

@@ -65,7 +65,7 @@ export default function GameStatus() {
                 {!isGameOver && (
                     <div className="mt-2 flex items-center space-x-2">
                         <div className={`h-2 w-2 rounded-full ${currentTurn === "X" ? "bg-primary" : "bg-secondary"}`}></div>
-                        <span className="text-sm">{currentTurn === "X" ? "Player X" : "Player O"}'s turn</span>
+                        <span className="text-sm">{currentTurn === "X" ? "Player X" : "Player O"}&apos;s turn</span>
                     </div>
                 )}
             </CardContent>

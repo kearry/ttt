@@ -3,7 +3,7 @@
 
 import { Suspense, useState, useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Text, useGLTF, PerspectiveCamera, Environment, ContactShadows } from "@react-three/drei";
+import { OrbitControls, Text, PerspectiveCamera, Environment, ContactShadows } from "@react-three/drei";
 import { useGame } from "@/contexts/game-context";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { makeAIMove } from "@/lib/actions/ai-actions";
 import { useRouter } from "next/navigation";
 
 // Cell component for board
-function Cell({ position, index, value, onClick, isWinningCell, theme }: {
+function Cell({ position, value, onClick, isWinningCell, theme }: {
     position: [number, number, number];
     index: number;
     value: "" | "X" | "O";

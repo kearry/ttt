@@ -43,7 +43,7 @@ export default function NewGameForm({ userId }: NewGameFormProps) {
             </CardHeader>
             <CardContent className="space-y-6">
                 <p>
-                    Choose your opponent type and start a new game. You'll play as X.
+                    Choose your opponent type and start a new game. You&apos;ll play as X.
                 </p>
 
                 <RadioGroup

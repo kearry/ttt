@@ -2,7 +2,7 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Clock, Award, X, CircleIcon } from "lucide-react";
+import { CheckCircle, Clock, Award, X } from "lucide-react";
 
 interface GameStatsProps {
     games: any[];

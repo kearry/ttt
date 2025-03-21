@@ -13,7 +13,7 @@ export default function JoinGameCard({ inviter }: { inviter: string }) {
         <Card className="p-6 flex flex-col items-center justify-center">
             <h2 className="text-xl font-bold mb-4">Join this game?</h2>
             <p className="text-center mb-6">
-                You've been invited to play against {inviter || "Player X"}
+                You&apos;ve been invited to play against {inviter || "Player X"}
             </p>
             <Button
                 onClick={handleJoinGame}

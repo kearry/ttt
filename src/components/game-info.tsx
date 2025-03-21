@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { History } from "lucide-react";
-import { useGame } from "@/contexts/game-context";
+//import { useGame } from "@/contexts/game-context";
 
 interface GameInfoProps {
     game: {

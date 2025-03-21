@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -28,9 +28,15 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Game, User } from "@prisma/client";
+
+interface GameWithPlayers extends Game {
+    playerX: User;
+    playerO: User | null;
+}
 
 interface GamesListProps {
-    games: any[];
+    games: GameWithPlayers[];
     userId: string;
 }
 
@@ -59,7 +65,7 @@ export default function GamesList({ games, userId }: GamesListProps) {
         }
     }
 
-    function getGameStatusIcon(game: any) {
+    function getGameStatusIcon(game: GameWithPlayers) {
         if (game.status === "ONGOING") {
             return <Clock className="h-5 w-5 text-blue-500" />;
         } else if (game.status === "DRAW") {
@@ -74,7 +80,7 @@ export default function GamesList({ games, userId }: GamesListProps) {
         }
     }
 
-    function getOpponentInfo(game: any) {
+    function getOpponentInfo(game: GameWithPlayers) {
         if (game.playerXId === userId) {
             return game.playerO
                 ? { name: game.playerO.name || "Player O", image: game.playerO.image }
@@ -87,11 +93,11 @@ export default function GamesList({ games, userId }: GamesListProps) {
         }
     }
 
-    function getPlayerSymbol(game: any) {
+    function getPlayerSymbol(game: GameWithPlayers) {
         return game.playerXId === userId ? "X" : "O";
     }
 
-    function getStatusText(game: any) {
+    function getStatusText(game: GameWithPlayers) {
         if (game.status === "ONGOING") {
             if (!game.playerOId) {
                 return "Waiting for opponent";

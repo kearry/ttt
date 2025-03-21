@@ -92,7 +92,7 @@ export async function makeMove({
     });
 
     // If player O doesn't exist yet and this is player O's move, update playerOId
-    let updateData: any = { board: newBoard };
+    const updateData: { board: string; playerO?: { connect: { id: string } }; status?: string; winner?: string | null } = { board: newBoard };
     if (player === "O" && !game.playerOId) {
         updateData.playerO = {
             connect: { id: userId }

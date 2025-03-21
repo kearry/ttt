@@ -46,7 +46,7 @@ export default async function GamesPage() {
                         <CardTitle>No games yet</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="mb-4">You haven't played any games yet.</p>
+                        <p className="mb-4">You haven&apos;t played any games yet.</p>
                         <Button asChild>
                             <Link href="/game/new">Start your first game</Link>
                         </Button>

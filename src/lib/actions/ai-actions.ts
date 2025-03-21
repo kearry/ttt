@@ -54,7 +54,7 @@ export async function makeAIMove(gameId: string) {
     }
 
     // Either make a winning move, block a potential win, or make a random move
-    let position = getBestMove(boardArray);
+    const position = getBestMove(boardArray);
 
     // Make the move
     boardArray[position] = "2"; // AI is always O
@@ -79,7 +79,7 @@ export async function makeAIMove(gameId: string) {
 
     const gameResult = checkGameResult(parsedBoard);
 
-    let updateData: any = { board: newBoard };
+    const updateData: { board: string; status?: string; winner?: string | null } = { board: newBoard };
 
     if (gameResult) {
         if (gameResult === "draw") {
