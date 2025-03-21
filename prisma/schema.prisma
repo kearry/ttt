@@ -44,6 +44,7 @@ model User {
   emailVerified  DateTime?
   image          String?
   password       String?   // Explicitly add this field
+  role          String?   @default("USER")
   accounts       Account[]
   sessions       Session[]
   gamesAsPlayerX Game[]    @relation("PlayerX")

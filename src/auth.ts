@@ -6,8 +6,9 @@ import Google from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import type { NextAuthOptions } from "next-auth";
 
-export const authConfig = {
+export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
@@ -82,4 +83,14 @@ export const authConfig = {
     },
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+// For server components
+import { getServerSession } from "next-auth";
+export async function auth() {
+    return await getServerSession(authOptions);
+}
+
+// For API routes
+export const handlers = NextAuth(authOptions);
+
+// For client components
+export { signIn, signOut } from "next-auth/react";
