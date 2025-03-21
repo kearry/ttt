@@ -6,7 +6,10 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Text, PerspectiveCamera, Environment } from "@react-three/drei";
 import * as THREE from "three";
 
-function XPiece({ position = [0, 0, 0], color = "#3b82f6" }) {
+function XPiece({ position = [0, 0, 0], color = "#3b82f6" }: {
+    position?: [number, number, number];
+    color?: string;
+}) {
     const groupRef = useRef<THREE.Group>(null);
 
     useFrame((state) => {
@@ -34,7 +37,10 @@ function XPiece({ position = [0, 0, 0], color = "#3b82f6" }) {
     );
 }
 
-function OPiece({ position = [0, 0, 0], color = "#ef4444" }) {
+function OPiece({ position = [0, 0, 0], color = "#ef4444" }: {
+    position?: [number, number, number];
+    color?: string;
+}) {
     const meshRef = useRef<THREE.Mesh>(null);
 
     useFrame((state) => {
@@ -104,7 +110,6 @@ function Board() {
                 position={[0, 1.5, 0]}
                 color="#1e293b"
                 fontSize={0.4}
-                font="/fonts/inter-bold.woff"
                 anchorX="center"
                 anchorY="middle"
             >
@@ -116,7 +121,6 @@ function Board() {
                 position={[0, 1, 0]}
                 color="#64748b"
                 fontSize={0.2}
-                font="/fonts/inter-medium.woff"
                 anchorX="center"
                 anchorY="middle"
             >

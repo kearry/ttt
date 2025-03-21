@@ -1,4 +1,4 @@
-// src/components/game-info.tsx (updated with history link)
+// src/components/game-info.tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,9 +9,28 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { History } from "lucide-react";
+import { useGame } from "@/contexts/game-context";
 
 interface GameInfoProps {
-    game: any;
+    game: {
+        id: string;
+        playerXId: string;
+        playerOId: string | null;
+        board: string;
+        status: string;
+        playerX: {
+            id: string;
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+        };
+        playerO?: {
+            id: string;
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+        } | null;
+    };
     userRole: string;
 }
 
@@ -33,7 +52,7 @@ export default function GameInfo({ game, userRole }: GameInfoProps) {
         ? "X"
         : "O";
 
-    function getInitials(name: string | null) {
+    function getInitials(name: string | null | undefined) {
         if (!name) return "?";
         return name
             .split(" ")
@@ -84,13 +103,13 @@ export default function GameInfo({ game, userRole }: GameInfoProps) {
                         {otherPlayerJoined ? (
                             <div className="flex items-center gap-2">
                                 <Avatar className="h-8 w-8">
-                                    {game.playerO.image ? (
+                                    {game.playerO?.image ? (
                                         <AvatarImage src={game.playerO.image} alt={game.playerO.name || "Player O"} />
                                     ) : (
-                                        <AvatarFallback>{getInitials(game.playerO.name)}</AvatarFallback>
+                                        <AvatarFallback>{getInitials(game.playerO?.name)}</AvatarFallback>
                                     )}
                                 </Avatar>
-                                <span>{game.playerO.name || "Player O"}</span>
+                                <span>{game.playerO?.name || "Player O"}</span>
                                 <Badge variant="outline" className="ml-auto">O</Badge>
                             </div>
                         ) : (
@@ -133,5 +152,3 @@ export default function GameInfo({ game, userRole }: GameInfoProps) {
         </Card>
     );
 }
-
-// Now let's create an enhanced games list component

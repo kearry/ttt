@@ -43,7 +43,6 @@ export default function GameStatus3D({ theme = "light" }: { theme?: "light" | "d
             <Text
                 color={textColor}
                 fontSize={0.3}
-                font="/fonts/inter-bold.woff"
                 anchorX="center"
                 anchorY="middle"
             >

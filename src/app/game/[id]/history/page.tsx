@@ -52,12 +52,12 @@ export default async function GameHistoryPage({ params }: { params: { id: string
                 return { text: "Game ended in a draw", variant: "warning" as const };
             case "PLAYER_X_WON":
                 return {
-                    text: `${game.playerX.name || "Player X"} won`,
+                    text: `${game?.playerX?.name || "Player X"} won`,
                     variant: isPlayerX ? "success" as const : "destructive" as const
                 };
             case "PLAYER_O_WON":
                 return {
-                    text: `${game.playerO?.name || "Player O"} won`,
+                    text: `${game?.playerO?.name || "Player O"} won`,
                     variant: isPlayerO ? "success" as const : "destructive" as const
                 };
             default:
@@ -65,7 +65,7 @@ export default async function GameHistoryPage({ params }: { params: { id: string
         }
     }
 
-    function getInitials(name: string | null) {
+    function getInitials(name: string | null | undefined) {
         if (!name) return "?";
         return name
             .split(" ")

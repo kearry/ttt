@@ -1,4 +1,4 @@
-// src/components/enhanced-game-board.tsx (updated)
+// src/components/enhanced-game-board.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -31,18 +31,32 @@ export default function EnhancedGameBoard() {
 
     // Automatically make AI move if it's their turn
     useEffect(() => {
+        // Count filled cells to determine if it's AI's turn
+        const filledCells = board.filter(cell => cell !== "").length;
+
         const isAITurn =
             isAIOpponent &&
             !isGameOver &&
             !waitingForAI &&
             !isLoading &&
             userRole === "X" && // User is always X against AI
-            board.filter(cell => cell !== "").length % 2 === 1; // AI's turn (odd number of moves)
+            filledCells % 2 === 1; // AI's turn (odd number of moves)
+
+        console.log("AI turn check:", {
+            isAIOpponent,
+            isGameOver,
+            waitingForAI,
+            isLoading,
+            userRole,
+            filledCells,
+            isAITurn
+        });
 
         if (isAITurn) {
             const makeMove = async () => {
                 setWaitingForAI(true);
                 try {
+                    console.log("Making AI move for game:", gameData.id);
                     await makeAIMove(gameData.id);
                     router.refresh();
                 } catch (error) {
@@ -87,11 +101,11 @@ export default function EnhancedGameBoard() {
                                 : "outline"
                         }
                         className={`
-              aspect-square text-3xl h-full font-bold
-              ${lastMoveIndex === index ? "ring-4 ring-primary ring-opacity-50" : ""}
-              ${canMakeMove && cell === "" ? "hover:bg-primary/10" : ""}
-              transition-all
-            `}
+                            aspect-square text-3xl h-full font-bold
+                            ${lastMoveIndex === index ? "ring-4 ring-primary ring-opacity-50" : ""}
+                            ${canMakeMove && cell === "" ? "hover:bg-primary/10" : ""}
+                            transition-all
+                        `}
                         onClick={() => handleClick(index)}
                         disabled={!canMakeMove || cell !== "" || isLoading || waitingForAI}
                     >

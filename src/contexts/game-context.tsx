@@ -4,10 +4,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { makeMove, joinGame } from "@/lib/actions/game-actions";
-
-// Define types for game state
-type BoardCell = "" | "X" | "O";
-type GameStatus = "ONGOING" | "PLAYER_X_WON" | "PLAYER_O_WON" | "DRAW";
+import { BoardCell, GameStatus, GameData } from "@/types/game-types";
 
 interface GameContextType {
     board: BoardCell[];
@@ -19,6 +16,7 @@ interface GameContextType {
     currentTurn: "X" | "O";
     status: GameStatus;
     userRole: string;
+    gameData: GameData;
     handleCellClick: (index: number) => Promise<void>;
     handleJoinGame: () => Promise<void>;
     resetError: () => void;
@@ -30,7 +28,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 // Game provider props
 interface GameProviderProps {
     children: React.ReactNode;
-    gameData: any;
+    gameData: GameData;
     userRole: string;
     userId: string;
 }
@@ -122,6 +120,7 @@ export function GameProvider({ children, gameData, userRole, userId }: GameProvi
         currentTurn,
         status: gameData.status,
         userRole,
+        gameData,
         handleCellClick,
         handleJoinGame,
         resetError

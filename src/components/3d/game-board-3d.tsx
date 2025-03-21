@@ -8,6 +8,8 @@ import { useGame } from "@/contexts/game-context";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { makeAIMove } from "@/lib/actions/ai-actions";
+import { useRouter } from "next/navigation";
 
 // Cell component for board
 function Cell({ position, index, value, onClick, isWinningCell, theme }: {
@@ -36,9 +38,11 @@ function Cell({ position, index, value, onClick, isWinningCell, theme }: {
         // Winning cell animation
         if (isWinningCell) {
             const t = state.clock.getElapsedTime();
-            meshRef.current.material.emissiveIntensity = Math.sin(t * 4) * 0.5 + 0.5;
+            const material = meshRef.current.material as THREE.MeshStandardMaterial;
+            material.emissiveIntensity = Math.sin(t * 4) * 0.5 + 0.5;
         } else {
-            (meshRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity = 0;
+            const material = meshRef.current.material as THREE.MeshStandardMaterial;
+            material.emissiveIntensity = 0;
         }
     });
 
@@ -81,7 +85,6 @@ function Cell({ position, index, value, onClick, isWinningCell, theme }: {
                     position={[0, 0.15, 0]}
                     fontSize={0.7}
                     color={value === "X" ? xColor : oColor}
-                    font="/fonts/inter-bold.woff"
                     anchorX="center"
                     anchorY="middle"
                 >
@@ -218,9 +221,11 @@ function CameraSetup() {
 
 // Main 3D Game Board component
 export default function GameBoard3D() {
-    const { isLoading, error, isGameOver } = useGame();
+    const { isLoading, error, isGameOver, gameData, board, userRole } = useGame();
     const [use3D, setUse3D] = useState(true);
     const [theme, setTheme] = useState<"light" | "dark">("light");
+    const [waitingForAI, setWaitingForAI] = useState(false);
+    const router = useRouter();
 
     // Detect system theme preference
     useEffect(() => {
@@ -234,6 +239,52 @@ export default function GameBoard3D() {
         darkModeMediaQuery.addEventListener('change', handler);
         return () => darkModeMediaQuery.removeEventListener('change', handler);
     }, []);
+
+    // Check if opponent is AI
+    const isAIOpponent = gameData.playerO?.email === "ai@tictactoe.game";
+
+    // Automatically make AI move if it's their turn
+    useEffect(() => {
+        // Count filled cells to determine if it's AI's turn
+        const filledCells = board.filter(cell => cell !== "").length;
+
+        const isAITurn =
+            isAIOpponent &&
+            !isGameOver &&
+            !waitingForAI &&
+            !isLoading &&
+            userRole === "X" && // User is always X against AI
+            filledCells % 2 === 1; // AI's turn (odd number of moves)
+
+        console.log("3D: AI turn check:", {
+            isAIOpponent,
+            isGameOver,
+            waitingForAI,
+            isLoading,
+            userRole,
+            filledCells,
+            isAITurn
+        });
+
+        if (isAITurn) {
+            const makeMove = async () => {
+                setWaitingForAI(true);
+                try {
+                    console.log("3D: Making AI move for game:", gameData.id);
+                    await makeAIMove(gameData.id);
+                    router.refresh();
+                } catch (error) {
+                    console.error("3D: AI move error:", error);
+                } finally {
+                    setWaitingForAI(false);
+                }
+            };
+
+            // Add a small delay to make it feel like the AI is "thinking"
+            const timeoutId = setTimeout(makeMove, 1000);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [board, isAIOpponent, isGameOver, waitingForAI, isLoading, userRole, gameData.id, router]);
 
     if (!use3D) {
         // Fallback to 2D board if user disables 3D
@@ -312,36 +363,45 @@ export default function GameBoard3D() {
                     </Canvas>
                 </Suspense>
 
-                {isLoading && (
+                {waitingForAI && (
+                    <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4 mx-auto"></div>
+                            <p className="font-medium">AI is thinking...</p>
+                        </div>
+                    </div>
+                )}
+
+                {isLoading && !waitingForAI && (
                     <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
                         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
                     </div>
                 )}
+
+                {error && (
+                    <div className="mt-4 p-2 bg-destructive/10 border border-destructive text-destructive rounded">
+                        {error}
+                    </div>
+                )}
+
+                {isGameOver && (
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                        <Button
+                            onClick={() => window.location.href = "/game/new"}
+                            className="w-full"
+                        >
+                            New Game
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => window.location.href = "/games"}
+                            className="w-full"
+                        >
+                            Game History
+                        </Button>
+                    </div>
+                )}
             </div>
-
-            {error && (
-                <div className="mt-4 p-2 bg-destructive/10 border border-destructive text-destructive rounded">
-                    {error}
-                </div>
-            )}
-
-            {isGameOver && (
-                <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Button
-                        onClick={() => window.location.href = "/game/new"}
-                        className="w-full"
-                    >
-                        New Game
-                    </Button>
-                    <Button
-                        variant="outline"
-                        onClick={() => window.location.href = "/games"}
-                        className="w-full"
-                    >
-                        Game History
-                    </Button>
-                </div>
-            )}
         </div>
     );
 }

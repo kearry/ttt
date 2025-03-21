@@ -4,18 +4,24 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-// Define props interface with all needed props
-interface ThemeProviderCompProps {
+// Define the specific type for the attribute prop
+type Attribute = "class" | "data-theme" | "data-mode";
+
+// Define props interface with the correct attribute type
+interface ThemeProviderProps {
     children: React.ReactNode;
-    attribute?: string;
+    attribute?: Attribute | Attribute[];
     defaultTheme?: string;
     enableSystem?: boolean;
     disableTransitionOnChange?: boolean;
-    [x: string]: any; // Allow any other props
+    storageKey?: string;
+    themes?: string[];
+    forcedTheme?: string;
 }
 
-// Use JSX.IntrinsicAttributes to tell TypeScript to allow any props
-export function ThemeProvider(props: ThemeProviderCompProps): JSX.Element {
-    // Pass all props to the NextThemesProvider
-    return <NextThemesProvider {...props} />;
+export function ThemeProvider({
+    children,
+    ...props
+}: ThemeProviderProps) {
+    return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }

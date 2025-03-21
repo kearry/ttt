@@ -10,6 +10,7 @@ import GameInfo from "@/components/game-info";
 import JoinGameCard from "@/components/join-game-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { GameStatus as GameStatusType } from "@/types/game-types";
 
 export default async function GamePage({ params }: { params: { id: string } }) {
     const session = await auth();
@@ -56,11 +57,20 @@ export default async function GamePage({ params }: { params: { id: string } }) {
     // Determine user's role
     const userRole = isPlayerX ? "X" : "O";
 
+    // Convert status to correct type
+    const gameStatus = game.status as GameStatusType;
+
+    // Prepare the properly typed game data for the provider
+    const gameData = {
+        ...game,
+        status: gameStatus
+    };
+
     return (
         <div className="container max-w-4xl mx-auto py-10">
             <h1 className="text-3xl font-bold mb-6">Tic-Tac-Toe Game</h1>
 
-            <GameProvider gameData={game} userRole={userRole} userId={session.user.id}>
+            <GameProvider gameData={gameData} userRole={userRole} userId={session.user.id}>
                 <GameStatus />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

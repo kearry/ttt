@@ -1,4 +1,4 @@
-// src/app/layout.tsx (updated)
+// src/app/layout.tsx 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -27,7 +27,6 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* @ts-expect-error - ThemeProvider props type mismatch but works at runtime */}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

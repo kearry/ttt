@@ -8,6 +8,34 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 
+// Define custom session types
+declare module "next-auth" {
+    interface User {
+        id: string;
+        name?: string | null;
+        email?: string | null;
+        image?: string | null;
+        role?: string | null;
+    }
+
+    interface Session {
+        user: {
+            id: string;
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+            role?: string | null;
+        };
+    }
+}
+
+declare module "next-auth/jwt" {
+    interface JWT {
+        id: string;
+        role?: string | null;
+    }
+}
+
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     session: {
@@ -60,27 +88,26 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     name: user.name,
                     image: user.image,
+                    role: user.role,
                 };
             },
         }),
     ],
     callbacks: {
         async session({ token, session }) {
-            console.log("Session callback, token:", token); // Debug log
-
-            if (token) {
-                session.user.id = token.id as string;
+            if (token && session.user) {
+                session.user.id = token.id;
                 session.user.name = token.name;
                 session.user.email = token.email;
                 session.user.image = token.picture;
+                session.user.role = token.role;
             }
             return session;
         },
         async jwt({ token, user }) {
-            console.log("JWT callback, user:", user); // Debug log
-
             if (user) {
                 token.id = user.id;
+                token.role = user.role;
             }
             return token;
         },
@@ -91,7 +118,6 @@ export const authOptions: NextAuthOptions = {
 import { getServerSession } from "next-auth";
 export async function auth() {
     const session = await getServerSession(authOptions);
-    console.log("Auth helper, session:", session); // Debug log
     return session;
 }
 
