@@ -8,7 +8,26 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { formatDistanceToNow } from "@/lib/utils";
-import { CheckCircle, Clock, AlertCircle, X, CircleIcon } from "lucide-react";
+import { CheckCircle, Clock, AlertCircle, X, Trash2, MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { deleteGame } from "@/lib/actions/game-actions";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface EnhancedGamesListProps {
     games: any[];
@@ -17,6 +36,8 @@ interface EnhancedGamesListProps {
 
 export default function EnhancedGamesList({ games, userId }: EnhancedGamesListProps) {
     const [filter, setFilter] = useState<"all" | "ongoing" | "completed">("all");
+    const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const router = useRouter();
 
     // Filter games based on selection
     const filteredGames = games.filter(game => {
@@ -25,6 +46,18 @@ export default function EnhancedGamesList({ games, userId }: EnhancedGamesListPr
         if (filter === "completed") return game.status !== "ONGOING";
         return true;
     });
+
+    async function handleDeleteGame(gameId: string) {
+        setIsDeleting(gameId);
+        try {
+            await deleteGame(gameId, userId);
+            router.refresh();
+        } catch (error) {
+            console.error("Failed to delete game:", error);
+        } finally {
+            setIsDeleting(null);
+        }
+    }
 
     function getGameStatusIcon(game: any) {
         if (game.status === "ONGOING") {
@@ -166,11 +199,49 @@ export default function EnhancedGamesList({ games, userId }: EnhancedGamesListPr
                                             </div>
                                         </div>
 
-                                        <Button asChild size="sm" variant={game.status === "ONGOING" ? "default" : "outline"}>
-                                            <Link href={`/game/${game.id}`}>
-                                                {game.status === "ONGOING" ? "Play" : "View"}
-                                            </Link>
-                                        </Button>
+                                        <div className="flex items-center space-x-2">
+                                            <Button asChild size="sm" variant={game.status === "ONGOING" ? "default" : "outline"}>
+                                                <Link href={`/game/${game.id}`}>
+                                                    {game.status === "ONGOING" ? "Play" : "View"}
+                                                </Link>
+                                            </Button>
+
+                                            <AlertDialog>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <AlertDialogTrigger asChild>
+                                                            <DropdownMenuItem>
+                                                                <Trash2 className="h-4 w-4 mr-2" />
+                                                                Delete Game
+                                                            </DropdownMenuItem>
+                                                        </AlertDialogTrigger>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Delete Game</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Are you sure you want to delete this game? This action cannot be undone.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDeleteGame(game.id)}
+                                                            disabled={isDeleting === game.id}
+                                                        >
+                                                            {isDeleting === game.id ? "Deleting..." : "Delete"}
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </div>
                                     </div>
                                 </div>
 

@@ -217,3 +217,35 @@ export async function joinGame({
 
     return updatedGame;
 }
+
+
+// src/lib/actions/game-actions.ts
+// Add this function to the existing file
+
+export async function deleteGame(gameId: string, userId: string) {
+    if (!userId) {
+        throw new Error("User ID is required to delete a game");
+    }
+
+    // Find the game
+    const game = await prisma.game.findUnique({
+        where: { id: gameId }
+    });
+
+    if (!game) {
+        throw new Error("Game not found");
+    }
+
+    // Check if user has permission to delete (must be a player)
+    if (game.playerXId !== userId && game.playerOId !== userId) {
+        throw new Error("You don't have permission to delete this game");
+    }
+
+    // Delete the game and related moves (using cascading deletes)
+    await prisma.game.delete({
+        where: { id: gameId }
+    });
+
+    revalidatePath('/games');
+    return { success: true };
+}
