@@ -75,8 +75,12 @@ export function GameProvider({ children, gameData, userRole, userId }: GameProvi
 
             // Refresh the data
             router.refresh();
-        } catch (err: any) {
-            setError(err.message || "Failed to make move");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Failed to make move");
+            } else {
+                setError("Failed to make move");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -97,8 +101,12 @@ export function GameProvider({ children, gameData, userRole, userId }: GameProvi
 
             // Refresh the data
             router.refresh();
-        } catch (err: any) {
-            setError(err.message || "Failed to join game");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Failed to join game");
+            } else {
+                setError("Failed to join game");
+            }
         } finally {
             setIsLoading(false);
         }

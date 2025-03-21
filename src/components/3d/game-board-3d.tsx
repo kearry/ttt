@@ -21,7 +21,6 @@ function Cell({ position, value, onClick, isWinningCell, theme }: {
     theme: "light" | "dark";
 }) {
     const [hovered, setHovered] = useState(false);
-    const [clicked, setClicked] = useState(false);
     const meshRef = useRef<THREE.Mesh>(null);
 
     // Handle animation
@@ -56,9 +55,7 @@ function Cell({ position, value, onClick, isWinningCell, theme }: {
     // Cell click handler
     const handleClick = () => {
         if (!value) {
-            setClicked(true);
             onClick();
-            setTimeout(() => setClicked(false), 200);
         }
     };
 

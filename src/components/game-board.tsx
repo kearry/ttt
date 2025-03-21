@@ -11,10 +11,10 @@ interface GameBoardProps {
     game: {
         id: string;
         board: string;
-        status: string;
-        playerX: { name?: string };
-        playerO?: { name?: string };
-        playerOId?: string | null;
+        status: "ONGOING" | "PLAYER_X_WON" | "PLAYER_O_WON" | "DRAW";
+        playerX: { name: string | null };
+        playerO?: { name: string | null };
+        playerOId: string | null;
     };
     userRole: string;
     userId: string;
@@ -67,8 +67,12 @@ export default function GameBoard({ game, userRole, userId }: GameBoardProps) {
 
             // Refresh the data
             router.refresh();
-        } catch (err: any) {
-            setError(err.message || "Failed to make move");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Failed to make move");
+            } else {
+                setError("Failed to make move");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -88,8 +92,12 @@ export default function GameBoard({ game, userRole, userId }: GameBoardProps) {
 
             // Refresh the data
             router.refresh();
-        } catch (err: any) {
-            setError(err.message || "Failed to join game");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || "Failed to join game");
+            } else {
+                setError("Failed to join game");
+            }
         } finally {
             setIsLoading(false);
         }

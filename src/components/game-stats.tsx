@@ -4,8 +4,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Clock, Award, X } from "lucide-react";
 
+// Define Game interface to replace any
+interface Game {
+    id: string;
+    status: string;
+    playerXId: string;
+    playerOId: string | null;
+    createdAt: string | Date;
+}
+
 interface GameStatsProps {
-    games: any[];
+    games: Game[];
     userId: string;
 }
 
